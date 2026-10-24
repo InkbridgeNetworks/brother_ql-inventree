@@ -6,7 +6,7 @@ from PIL import Image
 import PIL.ImageOps, PIL.ImageChops
 
 from brother_ql.devicedependent import ENDLESS_LABEL, DIE_CUT_LABEL, ROUND_DIE_CUT_LABEL, PTOUCH_ENDLESS_LABEL
-from brother_ql.devicedependent import label_type_specs, right_margin_addition
+from brother_ql.devicedependent import label_type_specs, right_margin_addition, label_geometry
 from brother_ql import BrotherQLUnsupportedCmd
 from brother_ql.image_trafos import filtered_hsv
 
@@ -44,6 +44,10 @@ def convert(qlr, images, label,  **kwargs):
 
     dots_printable = label_specs['dots_printable']
     right_margin_dots = label_specs['right_margin_dots']
+    # A model whose print head differs from the one in brother_ql.labels
+    # overrides the geometry of the label (see Model.label_geometry).
+    if label in label_geometry.get(qlr.model, {}):
+        dots_printable, right_margin_dots = label_geometry[qlr.model][label]
     right_margin_dots += right_margin_addition.get(qlr.model, 0)
     device_pixel_width = qlr.get_pixel_width()
 

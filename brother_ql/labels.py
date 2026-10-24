@@ -119,6 +119,22 @@ ALL_LABELS = (
 
 )
 
+#: P-touch tape geometry for the 560-pin, 360 dpi print head of the PT-P900
+#: series. The pt entries in ALL_LABELS hold the geometry of the 128-pin,
+#: 180 dpi print head of the PT-E550W, PT-P700 and PT-P750W. On the 360 dpi
+#: print head, that geometry places the image outside the tape for every tape
+#: narrower than 36 mm. The values come from Brother's 'Raster Command
+#: Reference PT-P900/P900W/P950NW' version 1.02, section 2 'Print Data',
+#: page 20: dots_printable is the number of print area pins, and offset_r is
+#: the number of right margin pins.
+#: Maps a label identifier to (dots_printable, offset_r).
+PTOUCH_360DPI_GEOMETRY = {
+    "pt12": ((150, 0), 213),
+    "pt18": ((234, 0), 171),
+    "pt24": ((320, 0), 128),
+    "pt36": ((454, 0),  61),
+}
+
 class LabelsManager(ElementsManager):
     DEFAULT_ELEMENTS = copy.copy(ALL_LABELS)
     ELEMENT_NAME = "label"

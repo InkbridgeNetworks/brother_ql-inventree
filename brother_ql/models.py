@@ -4,6 +4,7 @@ from typing import Tuple
 import copy
 
 from brother_ql.helpers import ElementsManager
+from brother_ql.labels import PTOUCH_360DPI_GEOMETRY
 
 @attrs
 class Model(object):
@@ -23,6 +24,10 @@ class Model(object):
     number_bytes_per_row = attrib(type=int, default=90)
     #: The required additional offset from the right side
     additional_offset_r = attrib(type=int, default=0)
+    #: Label geometry that differs on the print head of this model, as a map
+    #: from label identifier to (dots_printable, offset_r). A label without an
+    #: entry uses the geometry in brother_ql.labels.
+    label_geometry = attrib(type=dict, factory=dict)
     #: Support for the 'mode setting' opcode
     mode_setting = attrib(type=bool, default=True)
     #: Model has a cutting blade to automatically cut labels
@@ -231,6 +236,7 @@ ALL_MODELS = [
         identifier="PT-P900W",
         min_max_length_dots=(57, 28346),
         number_bytes_per_row=70,
+        label_geometry=PTOUCH_360DPI_GEOMETRY,
         series_code=0x30,
         model_code=0x69,
         product_id=0x2085,
@@ -239,6 +245,7 @@ ALL_MODELS = [
         identifier="PT-P950NW",
         min_max_length_dots=(57, 28346),
         number_bytes_per_row=70,
+        label_geometry=PTOUCH_360DPI_GEOMETRY,
         series_code=0x30,
         model_code=0x70,
         product_id=0x2086,

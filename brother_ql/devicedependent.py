@@ -30,6 +30,7 @@ min_max_length_dots = {}
 min_max_feed = {}
 number_bytes_per_row = {}
 right_margin_addition = {}
+label_geometry = {}
 modesetting = []
 cuttingsupport = []
 expandedmode = []
@@ -42,7 +43,7 @@ two_color_support = []
 def _populate_model_legacy_structures():
     from brother_ql.models import ModelsManager
     global models
-    global min_max_length_dots, min_max_feed, number_bytes_per_row, right_margin_addition
+    global min_max_length_dots, min_max_feed, number_bytes_per_row, right_margin_addition, label_geometry
     global modesetting, cuttingsupport, expandedmode, compressionsupport, two_color_support
 
     for model in ModelsManager().iter_elements():
@@ -51,6 +52,7 @@ def _populate_model_legacy_structures():
         min_max_feed[model.identifier] = model.min_max_feed
         number_bytes_per_row[model.identifier] = model.number_bytes_per_row
         right_margin_addition[model.identifier] = model.additional_offset_r
+        label_geometry[model.identifier] = model.label_geometry
         if model.mode_setting: modesetting.append(model.identifier)
         if model.cutting: cuttingsupport.append(model.identifier)
         if model.expanded_mode: expandedmode.append(model.identifier)
