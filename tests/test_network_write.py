@@ -39,7 +39,7 @@ def backend_with(sock):
     """Return a network backend that writes to `sock`, without connecting"""
     backend = BrotherQLBackendNetwork.__new__(BrotherQLBackendNetwork)
     backend.read_timeout = 0.01
-    backend.write_timeout = 60
+    backend.write_timeout = 10
     backend.s = sock
     return backend
 
@@ -58,7 +58,7 @@ class TestNetworkWrite(unittest.TestCase):
         backend_with(sock)._write(b"x" * 50)
         # The write timeout covers each send() call, and the read timeout is
         # restored for the next read.
-        self.assertEqual(sock.timeouts, [60, 0.01])
+        self.assertEqual(sock.timeouts, [10, 0.01])
 
 
 if __name__ == "__main__":

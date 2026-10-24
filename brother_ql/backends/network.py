@@ -35,10 +35,8 @@ class BrotherQLBackendNetwork(BrotherQLBackendGeneric):
 
         self.read_timeout = 0.01
         # Longest time that the printer may accept no data before a write
-        # fails. While the receive buffer of the printer is full, the printer
-        # advertises a zero window until printing frees space. A PT-P950NW
-        # printing a batch of 24 mm labels held a zero window for up to 12.3 s.
-        self.write_timeout = 60
+        # fails. Each send() call in _write() gets the full write_timeout.
+        self.write_timeout = 10
         # strategy : try_twice, select or socket_timeout
         self.strategy = 'socket_timeout'
         if isinstance(device_specifier, str):
