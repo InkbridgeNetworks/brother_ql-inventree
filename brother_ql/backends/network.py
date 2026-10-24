@@ -34,6 +34,11 @@ class BrotherQLBackendNetwork(BrotherQLBackendGeneric):
         """
 
         self.read_timeout = 0.01
+        # Longest time that the printer may accept no data before a write
+        # fails. While the receive buffer of the printer is full, the printer
+        # advertises a zero window until printing frees space. A PT-P950NW
+        # printing a batch of 24 mm labels held a zero window for up to 12.3 s.
+        self.write_timeout = 60
         # strategy : try_twice, select or socket_timeout
         self.strategy = 'socket_timeout'
         if isinstance(device_specifier, str):
@@ -63,8 +68,17 @@ class BrotherQLBackendNetwork(BrotherQLBackendGeneric):
             raise NotImplementedError('Currently the printer can be specified either via an appropriate string or via an os.open() handle.')
 
     def _write(self, data):
-        self.s.settimeout(10)
-        self.s.sendall(data)
+        # Since Python 3.5, the timeout of sendall() is a deadline for the
+        # whole call, and does not restart when the printer accepts data. A
+        # printer that accepts a label slowly, while printing the labels ahead
+        # of the label, then fails part way through the label, and the printer
+        # waits for the rest of the label. Each send() call gets the full
+        # write_timeout instead, so the timeout restarts whenever data moves.
+        view = memoryview(data)
+        self.s.settimeout(self.write_timeout)
+        while view:
+            sent = self.s.send(view)
+            view = view[sent:]
         self.s.settimeout(self.read_timeout)
 
     def _read(self, length=32):
